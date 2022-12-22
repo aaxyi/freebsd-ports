@@ -1,0 +1,53 @@
+#!/bin/sh
+
+LWJGL_JLP_OVRD="/usr/local/lib/lwjgl3:/usr/local/lib:/usr/lib"
+LWJGL_OVRD="/usr/local/share/java/classes/lwjgl3/lwjgl.jar"
+LWJGL_OGL_OVRD="/usr/local/share/java/classes/lwjgl3/lwjgl-opengl.jar"
+LWJGL_OAL_OVRD="/usr/local/share/java/classes/lwjgl3/lwjgl-openal.jar"
+LWJGL_GLFW_OVRD="/usr/local/share/java/classes/lwjgl3/lwjgl-glfw.jar"
+LWJGL_STB_OVRD="/usr/local/share/java/classes/lwjgl3/lwjgl-stb.jar"
+LWJGL_JEM_OVRD="/usr/local/share/java/classes/lwjgl3/lwjgl-jemalloc.jar"
+
+JAVA="/usr/local/openjdk19/bin/java"
+if [ -z "$JAVA" ]; then
+    JAVA="java"
+fi
+
+build_classpath() {
+    local IFS=":"
+    for p in ${1}
+    do
+        case "${p}" in 
+	    *lwjgl-opengl*)
+		    cp="${cp}:${LWJGL_OGL_OVRD}" ;;
+	    *lwjgl-openal*)
+		    cp="${cp}:${LWJGL_OAL_OVRD}" ;;
+	    *lwjgl-glfw*)
+		    cp="${cp}:${LWJGL_GLFW_OVRD}" ;;
+	    *lwjgl-stb*)
+		    cp="${cp}:${LWJGL_STB_OVRD}" ;;
+	    *lwjgl-jemalloc*) 
+            cp="${cp}:${LWJGL_JEM_OVRD}" ;;
+        *lwjgl*)
+            cp="${cp}:${LWJGL_OVRD}" ;;
+        *)
+		    cp="${cp}:${p}" ;;
+        esac
+    done
+    cp=${cp#?}
+}
+
+for var in "${@}"
+do
+    case "${var}" in
+    -Djava.library*)
+        args="${args} -Djava.library.path=${LWJGL_JLP_OVRD}" ;;
+    *lwjgl-opengl*)
+        build_classpath "${var}"
+        args="${args} ${cp}" ;;
+    *)
+        args="${args} ${var}" ;;
+    esac
+done
+
+$JAVA ${args}
