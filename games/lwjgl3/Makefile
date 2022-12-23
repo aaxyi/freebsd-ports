@@ -28,7 +28,6 @@ MAINTAINER=	me@axyria.dev
 COMMENT=    Lightweight Java Game Library 3
 
 do-install:
-	echo "@${MKDIR} ${STAGEDIR}${JAVAJARDIR}/${PORTNAME}"
 	@${MKDIR} ${STAGEDIR}${JAVAJARDIR}/${PORTNAME}
 	@${MKDIR} ${STAGEDIR}${PREFIX}/lib/${PORTNAME}
 .for x in ${WRKSRC}/bin/RELEASE/lwjgl*/*.jar
