@@ -1,0 +1,7 @@
+bin/prismlauncher
+share/applications/org.prismlauncher.PrismLauncher.desktop
+share/icons/hicolor/scalable/apps/org.prismlauncher.PrismLauncher.svg
+share/metainfo/org.prismlauncher.PrismLauncher.metainfo.xml
+share/mime/packages/modrinth-mrpack-mime.xml
+share/prismlauncher/JavaCheck.jar
+share/prismlauncher/NewLaunch.jar

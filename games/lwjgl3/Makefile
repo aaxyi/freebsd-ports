@@ -24,8 +24,8 @@ USE_XORG=	x11
 MAKE_ENV+=	 LWJGL_BUILD_OFFLINE=true
 ALL_TARGET=  all release
 
-MAINTAINER=	me@axyria.dev
-COMMENT=    Lightweight Java Game Library 3
+MAINTAINER=	 me@axyria.dev
+COMMENT=     Lightweight Java Game Library 3
 
 do-install:
 	@${MKDIR} ${STAGEDIR}${JAVAJARDIR}/${PORTNAME}
