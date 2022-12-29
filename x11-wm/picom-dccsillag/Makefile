@@ -1,0 +1,74 @@
+PORTNAME=	picom-dccsillag
+DISTVERSION=Next
+CATEGORIES=	x11-wm
+
+MAINTAINER=	dev@axyria.dev
+COMMENT=	Lightweight X11 compositor
+WWW=		https://github.com/dccsillag/picom
+
+LICENSE=	MIT MPL20
+LICENSE_COMB=	multi
+LICENSE_FILE_MIT=	${WRKSRC}/LICENSES/MIT
+
+BUILD_DEPENDS=	${LOCALBASE}/include/uthash.h:devel/uthash
+LIB_DEPENDS=	libev.so:devel/libev \
+		libxcb-image.so:x11/xcb-util-image \
+		libxcb-render-util.so:x11/xcb-util-renderutil
+RUN_DEPENDS=	xprop:x11/xprop \
+		xwininfo:x11/xwininfo
+
+USES=		compiler:c11 meson localbase pkgconfig xorg
+USE_GITHUB=	yes
+USE_XORG=	x11 xcb xext pixman
+GH_ACCOUNT=	dccsillag
+GH_PROJECT= picom
+GH_TAGNAME= 51b2135
+MESON_ARGS=	-Dcompton=false -Dunittest=true
+TEST_TARGET=	test
+PLIST_FILES=	bin/picom \
+		bin/picom-trans \
+		etc/xdg/autostart/picom.desktop \
+		"@sample etc/xdg/picom.conf.sample" \
+		share/applications/picom.desktop
+
+OPTIONS_DEFINE=	CONFIG DBUS DOCS DRM OPENGL PCRE
+OPTIONS_DEFAULT=CONFIG DBUS OPENGL PCRE
+
+CONFIG_DESC=		Configuration file parsing support
+CONFIG_LIB_DEPENDS=	libconfig.so:devel/libconfig
+CONFIG_MESON_TRUE=	config_file
+
+PCRE_LIB_DEPENDS=	libpcre.so:devel/pcre
+PCRE_MESON_TRUE=	regex
+
+DRM_DESC=		DRM VSync fallback (deprecated)
+DRM_LIB_DEPENDS=	libdrm.so:graphics/libdrm
+DRM_MESON_TRUE=		vsync_drm
+
+OPENGL_USES=		gl
+OPENGL_USE=		GL=egl,gl
+OPENGL_MESON_TRUE=	opengl
+
+DBUS_LIB_DEPENDS=	libdbus-1.so:devel/dbus
+DBUS_MESON_TRUE=	dbus
+
+DOCS_BUILD_DEPENDS=	a2x:textproc/asciidoc
+DOCS_MESON_TRUE=	with_docs
+DOCS_PLIST_FILES=	man/man1/picom.1.gz \
+			man/man1/picom-trans.1.gz
+
+post-patch:
+	@${REINPLACE_CMD} -e 's,/etc,${PREFIX}&,' \
+		${WRKSRC}/man/picom.1.asciidoc \
+		${WRKSRC}/src/config.c
+# Extract (snapshot) version from the port instead of meson.build
+	@${REINPLACE_CMD} -i .nogit -e 's/git.found()/false/' \
+		-e "/project_version/s/=.*/= '${DISTVERSIONFULL}'/" \
+		${WRKSRC}/meson.build
+
+post-install:
+	${MKDIR} ${STAGEDIR}${PREFIX}/etc/xdg
+	${INSTALL_DATA} ${WRKSRC}/picom.sample.conf \
+		${STAGEDIR}${PREFIX}/etc/xdg/picom.conf.sample
+
+.include <bsd.port.mk>

@@ -8,9 +8,9 @@ LWJGL_GLFW_OVRD="/usr/local/share/java/classes/lwjgl3/lwjgl-glfw.jar"
 LWJGL_STB_OVRD="/usr/local/share/java/classes/lwjgl3/lwjgl-stb.jar"
 LWJGL_JEM_OVRD="/usr/local/share/java/classes/lwjgl3/lwjgl-jemalloc.jar"
 
-JAVA="/usr/local/openjdk19/bin/java"
-if [ -z "$JAVA" ]; then
-    JAVA="java"
+JAVA_HOME=${JAVA_HOME:-/usr/local/openjdk19}
+if [ ! -d "$JAVA_HOME" ]
+    then JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
 fi
 
 build_classpath() {

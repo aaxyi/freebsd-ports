@@ -1,0 +1,6 @@
+bin/picom
+bin/picom-trans
+etc/xdg/picom.conf.sample
+man/man1/picom-trans.1.gz
+man/man1/picom.1.gz
+share/applications/picom.desktop
